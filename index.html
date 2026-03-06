@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login MAP Helper</title>
+    <link rel="icon" type="image/png" href="/assets/icon48.png">
+
+    <!-- CSS Dependensi (Lokal untuk Mematuhi CSP) Karana Ekstensi tidak boleh akses CDN Script -->
+    <link href="bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts tetap diperbolehkan selama bukan script -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Pengaturan Dasar */
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            background-color: #f8f9fa;
+        }
+
+        /* --- Sisi Kiri: Visual Premium --- */
+        .bg-premium {
+            background: linear-gradient(-45deg, #33691e, #558b2f, #7cb342, #2e7d32);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            position: relative;
+        }
+
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.5;
+            animation: float 10s infinite ease-in-out;
+            z-index: 1;
+        }
+
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: #aed581;
+            top: -10%;
+            left: -10%;
+        }
+
+        .orb-2 {
+            width: 500px;
+            height: 500px;
+            background: #f1f8e9;
+            bottom: -20%;
+            right: -10%;
+            animation-delay: -5s;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0) scale(1);
+            }
+
+            50% {
+                transform: translateY(-30px) scale(1.05);
+            }
+        }
+
+        .brand-content {
+            z-index: 2;
+            position: relative;
+            text-align: center;
+        }
+
+        /* --- Sisi Kanan: Form Login --- */
+        .login-wrapper {
+            max-width: 450px;
+            width: 100%;
+            padding: 2rem;
+        }
+
+        .form-floating>.form-control {
+            border-radius: 0.75rem;
+            border: 1.5px solid #e0e0e0;
+            padding-right: 2.5rem;
+            transition: all 0.3s ease;
+            background-color: #ffffff;
+        }
+
+        .form-floating>.form-control:focus {
+            box-shadow: 0 0 0 0.25rem rgba(85, 139, 47, 0.2);
+            border-color: #558b2f;
+        }
+
+        .input-icon {
+            position: absolute;
+            right: 1.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #adb5bd;
+            transition: color 0.3s ease;
+            z-index: 5;
+        }
+
+        .form-control:focus~.input-icon {
+            color: #558b2f;
+        }
+
+        .btn-premium {
+            background: linear-gradient(135deg, #33691e, #558b2f);
+            border: none;
+            color: white;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-premium:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(10, 25, 47, 0.2);
+            color: white;
+        }
+
+        .btn-premium::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0) 100%);
+            transform: skewX(-25deg);
+            transition: all 0.75s ease;
+        }
+
+        .btn-premium:hover::after {
+            left: 150%;
+        }
+
+        .link-premium {
+            color: #558b2f;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .link-premium:hover {
+            color: #33691e;
+        }
+
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .delay-1 {
+            animation-delay: 0.1s;
+        }
+
+        .delay-2 {
+            animation-delay: 0.2s;
+        }
+
+        .delay-3 {
+            animation-delay: 0.3s;
+        }
+
+        .delay-4 {
+            animation-delay: 0.4s;
+        }
+
+        #notification,
+        #errorNotification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1050;
+            display: none;
+            min-width: 300px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Notifications -->
+    <div id="notification" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle me-2"></i><strong>Berhasil!</strong> Mengalihkan ke dasbor...
+        <button type="button" class="btn-close" onclick="this.parentElement.style.display='none'"></button>
+    </div>
+
+    <div id="errorNotification" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-circle me-2"></i><strong id="errorMsg">Gagal!</strong>
+        <button type="button" class="btn-close" onclick="this.parentElement.style.display='none'"></button>
+    </div>
+
+    <div class="container-fluid vh-100 p-0">
+        <div class="row g-0 h-100">
+            <!-- Left Side: Branding -->
+            <div class="col-lg-6 d-none d-lg-flex align-items-center justify-content-center bg-premium overflow-hidden">
+                <div class="orb orb-1"></div>
+                <div class="orb orb-2"></div>
+                <div class="brand-content text-white p-5 fade-in-up">
+                    <div class="mb-4">
+                        <img src="/assets/icon128.png" alt="Logo"
+                            style="width: 120px; height: 120px; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.2));">
+                    </div>
+                    <h1 class="display-4 fw-bold mb-3">MAP Helper</h1>
+                    <p class="lead fw-light">Membantu monitoring transaksi pada website MAP Pertamina agar Agen lebih
+                        mudah untuk melihat transaksi pangkalan.</p>
+                </div>
+            </div>
+
+            <!-- Right Side: Login Form -->
+            <div
+                class="col-lg-6 d-flex flex-column align-items-center justify-content-center bg-white position-relative">
+                <div class="login-wrapper fade-in-up delay-1">
+                    <div class="text-center mb-5 fade-in-up delay-2">
+                        <img src="/assets/icon128.png" class="d-lg-none mb-3" style="width: 80px; height: 80px;">
+                        <h2 class="fw-bold text-dark mb-2" id="greetingText">Selamat Datang</h2>
+                        <p class="text-muted">Silakan masuk ke akun Agensi Anda</p>
+                    </div>
+
+                    <form id="loginForm" class="fade-in-up delay-3">
+                        <div class="form-floating mb-4 position-relative">
+                            <input type="email" class="form-control shadow-none" id="emailInput"
+                                placeholder="nama@perusahaan.com" required>
+                            <label for="emailInput">Alamat Email</label>
+                            <i class="fas fa-envelope input-icon"></i>
+                        </div>
+
+                        <div class="form-floating mb-4 position-relative">
+                            <input type="password" class="form-control shadow-none" id="passwordInput"
+                                placeholder="Kata Sandi" required style="padding-right: 3.5rem;">
+                            <label for="passwordInput">Kata Sandi</label>
+                            <i class="fas fa-eye-slash input-icon" id="togglePassword"
+                                style="pointer-events: auto; cursor: pointer;"></i>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mb-5 text-sm">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input shadow-none" id="rememberMe">
+                                <label class="form-check-label text-muted" for="rememberMe"
+                                    style="font-size: 0.9rem;">Ingat Saya</label>
+                            </div>
+                            <a href="#" class="link-premium fw-semibold" style="font-size: 0.9rem;">Lupa Sandi?</a>
+                        </div>
+
+                        <button type="submit"
+                            class="btn btn-premium w-100 py-3 mb-4 d-flex justify-content-center align-items-center"
+                            id="loginBtn">
+                            <span id="btnText">MASUK KE PORTAL</span>
+                            <div class="spinner-border spinner-border-sm text-light ms-2 d-none" role="status"
+                                id="loginSpinner"></div>
+                        </button>
+                    </form>
+
+                    <div class="text-center mt-4 fade-in-up delay-4">
+                        <p class="text-muted" style="font-size: 0.9rem;">Belum memiliki akses? <a href="#"
+                                class="link-premium fw-bold">Hubungi Administrator</a></p>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <footer class="mt-auto px-4 pb-4 fade-in-up delay-4 w-100"
+                    style="position: absolute; bottom: 0; left: 0;">
+                    <div class="d-flex justify-content-center">
+                        <p class="text-muted mb-0" style="font-size: 0.8rem;">
+                            &copy; <span id="footerYear"></span> PrimaDev All Rights Reserved
+                        </p>
+                    </div>
+                </footer>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/storage_helper.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/auth_helper.js"></script>
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/login.js"></script>
+</body>
+
+</html>

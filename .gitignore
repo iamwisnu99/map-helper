@@ -1,0 +1,23 @@
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary files
+/tmp/
+*.log
+encoded.txt
+image_duplicate.py
+
+# Local env files (if any)
+.env
+.env.local
+
+# Git
+.git/

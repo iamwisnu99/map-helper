@@ -1,0 +1,56 @@
+{
+  "manifest_version": 3,
+  "name": "PrimaDev - MAP Helper",
+  "version": "5.0",
+  "description": "Monitoring transaksi NIK LPG 3kg pada MAP untuk menghindari Uji Petik.",
+  "permissions": [
+    "storage",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "https://pehwkoapypzzfbdmhjxa.supabase.co/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://subsiditepatlpg.mypertamina.id/merchant/*"
+      ],
+      "js": [
+        "js/storage_helper.js",
+        "js/config.js",
+        "js/auth_helper.js",
+        "js/content.js"
+      ]
+    }
+  ],
+  "icons": {
+    "16": "/assets/icon16.png",
+    "48": "/assets/icon48.png",
+    "128": "/assets/icon128.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "/assets/icon48.png"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "dashboard.html",
+        "index.html",
+        "js/login.js",
+        "js/bootstrap.bundle.min.js",
+        "bootstrap.min.css",
+        "/assets/logo.png",
+        "/assets/pertamina_logo.png",
+        "js/jspdf.min.js",
+        "js/jspdf-autotable.min.js",
+        "js/chart.min.js",
+        "js/storage_helper.js",
+        "js/config.js"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ]
+}
