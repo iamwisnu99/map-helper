@@ -2,8 +2,8 @@
 
 let deferredPrompt;
 
-// 1. Inject PWA Manifest dynamically if we are on Netlify
-if (window.location.hostname.includes('netlify.app')) {
+// 1. Inject PWA Manifest dynamically if we are on HTTPS or localhost
+if (window.location.protocol === 'https:' || window.location.hostname === 'localhost') {
     const link = document.createElement('link');
     link.rel = 'manifest';
     link.href = '/pwa-manifest.json';
@@ -23,8 +23,8 @@ if (window.location.hostname.includes('netlify.app')) {
 
 // 3. Listen for the install prompt
 window.addEventListener('beforeinstallprompt', (e) => {
-    // Only operate if on netlify
-    if (!window.location.hostname.includes('netlify.app')) {
+    // Only operate if on https or localhost
+    if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
         return;
     }
 
