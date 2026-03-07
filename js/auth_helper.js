@@ -32,9 +32,11 @@ const AuthHelper = {
                             const newData = await response.json();
                             StorageHelper.set({ 'supabase_session': newData }, () => {
                                 resolve(newData);
+                                console.log("[AuthHelper] Token refreshed successfully ✅");
                             });
                         } else {
                             const errorData = await response.json();
+                            console.log("[AuthHelper] Token refresh failed ❌", errorData);
                             if (errorData.error === 'invalid_grant' || errorData.message?.includes('expired')) {
                                 StorageHelper.remove(['supabase_session'], () => resolve(null));
                             } else {
@@ -42,6 +44,7 @@ const AuthHelper = {
                             }
                         }
                     } catch (e) {
+                        console.log("[AuthHelper] Token refresh failed ❌", e);
                         resolve(session);
                     }
                 } else {

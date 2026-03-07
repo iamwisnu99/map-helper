@@ -34,7 +34,7 @@
             --text-muted: #64748b;
             --border: #e2e8f0;
             --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
-            --sidebar-width: 260px;
+            --sidebar-width: 0px;
         }
 
         * {
@@ -1868,30 +1868,6 @@
 </head>
 
 <body>
-    <aside class="sidebar" id="sidebar">
-        <div class="brand">
-            <div class="brand-info">
-                <img src="/assets/icon128.png" alt="PrimaDev Logo"
-                    style="width: 36px; height: 36px; border-radius: 10px; object-fit: contain;">
-                <div class="brand-name">MAP Helper</div>
-            </div>
-            <div class="close-sidebar" id="closeSidebar">
-                <i class="far fa-times"></i>
-            </div>
-        </div>
-
-        <div class="sidebar-section">
-            <span class="sidebar-label">Jenis Pelanggan</span>
-            <ul class="sidebar-menu" id="customerTypeSidebar">
-                <!-- Will be populated by JS -->
-                <li class="sidebar-item active" data-type="all">Semua Jenis</li>
-            </ul>
-        </div>
-
-        </div>
-    </aside>
-
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <!-- MAIN AGENT INFORMATION MODAL -->
     <div class="modal" id="mainAgentInfoModal">
@@ -2055,6 +2031,22 @@
         </div>
     </div>
 
+    <!-- ALERT SELECT PANGKALAN MODAL -->
+    <div class="alert-modal-overlay" id="selectPangkalanAlert">
+        <div class="alert-modal-content">
+            <div class="warning-icon-wrapper" style="background: #eff6ff;">
+                <div class="warning-icon" style="color: var(--primary);"><i class="fal fa-store"></i></div>
+            </div>
+            <h3 class="alert-title">Pilih Pangkalan Terlebih Dahulu</h3>
+            <p class="alert-desc">Untuk mencetak laporan, Anda wajib memilih pangkalan spesifik (bukan "Semua
+                Pangkalan") pada filter bagian atas.</p>
+            <div class="alert-actions" style="justify-content: flex-end;">
+                <button class="btn-close-alert" id="closeSelectPangkalanAlert"
+                    style="background: var(--success); color: white; padding: 12px 24px; border-radius: 12px; font-weight: 600; width: auto;">Mengerti</button>
+            </div>
+        </div>
+    </div>
+
     <!-- LOGOUT CONFIRMATION MODAL -->
     <div class="logout-modal-overlay" id="logoutConfirmModal">
         <div class="logout-modal-content">
@@ -2086,7 +2078,6 @@
     <main class="main">
         <header>
             <div class="title-area">
-                <button class="menu-toggle" id="menuToggle">☰</button>
                 <h1>Dashboard</h1>
                 <button class="btn-refresh-mini" id="refreshDataBtn" title="Refresh Data">
                     <i class="fas fa-sync-alt"></i>
@@ -2181,6 +2172,19 @@
                     </div>
                     <div class="custom-select-options" id="customOptions">
                         <div class="select-option selected" data-value="all">Semua Pangkalan</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="filter-group" style="min-width: 140px;">
+                <label>Jenis Pelanggan</label>
+                <div class="select-wrapper">
+                    <div class="custom-select-trigger" id="customerTypeSelectTrigger">
+                        <span class="selected-text">Semua Jenis</span>
+                        <span style="font-size: 10px;">▼</span>
+                    </div>
+                    <div class="custom-select-options" id="customerTypeOptions">
+                        <div class="select-option selected" data-value="all">Semua Jenis</div>
                     </div>
                 </div>
             </div>

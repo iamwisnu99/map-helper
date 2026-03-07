@@ -87,7 +87,8 @@ const accountOptionsContainer = document.getElementById('customOptions');
 const accountSelectedText = accountSelectTrigger ? accountSelectTrigger.querySelector('.selected-text') : null;
 
 const paginationContainer = document.getElementById('pagination');
-const customerTypeSidebar = document.getElementById('customerTypeSidebar');
+const customerTypeSelectTrigger = document.getElementById('customerTypeSelectTrigger');
+const customerTypeOptions = document.getElementById('customerTypeOptions');
 const nikSearchInput = document.getElementById('nikSearch');
 const tableInfo = document.getElementById('tableInfo');
 
@@ -372,21 +373,25 @@ function updateFilterControls() {
         accountOptionsContainer.appendChild(opt);
     });
 
-    // Populate Customer Type Sidebar
-    if (customerTypeSidebar) {
-        customerTypeSidebar.innerHTML = '<li class="sidebar-item ' + (currentCustomerType === 'all' ? 'active' : '') + '" data-type="all">Semua Jenis</li>';
+    // Populate Customer Type Options
+    if (customerTypeOptions) {
+        while (customerTypeOptions.children.length > 1) {
+            customerTypeOptions.removeChild(customerTypeOptions.lastChild);
+        }
 
         Array.from(seenCustomerTypes).sort().forEach(type => {
-            const li = document.createElement('li');
-            li.className = 'sidebar-item ' + (currentCustomerType === type ? 'active' : '');
-            li.dataset.type = type;
-            li.textContent = type;
-            li.onclick = () => selectCustomerType(type);
-            customerTypeSidebar.appendChild(li);
+            const opt = document.createElement('div');
+            opt.className = 'select-option';
+            opt.dataset.value = type;
+            opt.textContent = type;
+            if (currentCustomerType === type) {
+                opt.classList.add('selected');
+                if (customerTypeSelectTrigger) {
+                    customerTypeSelectTrigger.querySelector('.selected-text').textContent = type;
+                }
+            }
+            customerTypeOptions.appendChild(opt);
         });
-
-        // add listener for the "All" item which was just added manually
-        customerTypeSidebar.querySelector('[data-type="all"]').onclick = () => selectCustomerType('all');
     }
 }
 
@@ -394,9 +399,11 @@ function selectCustomerType(type) {
     currentCustomerType = type;
     currentPage = 1;
 
-    document.querySelectorAll('.sidebar-item').forEach(item => {
-        item.classList.toggle('active', item.dataset.type === type);
-    });
+    // The text update is handled in setupCustomSelect if triggered manually,
+    // but if triggered programmatically, we should update UI.
+    if (customerTypeSelectTrigger) {
+        customerTypeSelectTrigger.querySelector('.selected-text').textContent = type === 'all' ? 'Semua Jenis' : type;
+    }
 
     refreshFilteredData();
 }
@@ -772,35 +779,14 @@ setupCustomSelect(pageSizeSelectTrigger, pageSizeOptions, (val) => {
 
 setupMonthPicker();
 
+setupCustomSelect(customerTypeSelectTrigger, customerTypeOptions, (val) => {
+    selectCustomerType(val);
+});
+
 // Bootstrap
 document.addEventListener('DOMContentLoaded', () => {
     loadDataFromCloud('all', monthInput ? monthInput.value : '');
 });
-
-// Mobile Menu Toggle
-const menuToggle = document.getElementById('menuToggle');
-const sidebar = document.getElementById('sidebar');
-const sidebarOverlay = document.getElementById('sidebarOverlay');
-const closeSidebar = document.getElementById('closeSidebar');
-
-if (menuToggle && sidebar && sidebarOverlay) {
-    const toggleSidebar = () => {
-        sidebar.classList.toggle('show');
-        sidebarOverlay.classList.toggle('show');
-        document.body.style.overflow = sidebar.classList.contains('show') ? 'hidden' : '';
-    };
-
-    menuToggle.onclick = toggleSidebar;
-    sidebarOverlay.onclick = toggleSidebar;
-    if (closeSidebar) closeSidebar.onclick = toggleSidebar;
-
-    // Close on menu item click (mobile)
-    sidebar.onclick = (e) => {
-        if (e.target.closest('.sidebar-item') && window.innerWidth <= 1024) {
-            toggleSidebar();
-        }
-    };
-}
 
 // === AGENT PROFILE MANAGEMENT ===
 const openAgentInfoBtn = document.getElementById('openAgentInfoBtn');
@@ -963,10 +949,17 @@ const pangkalanNameInput = document.getElementById('pangkalanNameInput');
 if (exportPdfBtn && agentInfoModal) {
     const noDataAlert = document.getElementById('noDataAlert');
     const closeNoDataAlert = document.getElementById('closeNoDataAlert');
+    const selectPangkalanAlert = document.getElementById('selectPangkalanAlert');
+    const closeSelectPangkalanAlert = document.getElementById('closeSelectPangkalanAlert');
 
     exportPdfBtn.onclick = () => {
         if (filteredData.length === 0) {
             noDataAlert.classList.add('show');
+            return;
+        }
+
+        if (currentFilter === 'all') {
+            selectPangkalanAlert.classList.add('show');
             return;
         }
 
@@ -978,7 +971,7 @@ if (exportPdfBtn && agentInfoModal) {
                 document.getElementById('agentPhoneInput').value = result.agent_profile.phone || "";
                 document.getElementById('agentAddressInput').value = result.agent_profile.address || "";
                 document.getElementById('agentOwnerInput').value = result.agent_profile.owner_name || "";
-                pangkalanNameInput.value = currentFilter !== 'all' ? currentFilter : "";
+                pangkalanNameInput.value = currentFilter;
             } else if (currentFilter !== 'all') {
                 pangkalanNameInput.value = currentFilter;
             }
@@ -989,6 +982,10 @@ if (exportPdfBtn && agentInfoModal) {
 
     if (closeNoDataAlert) {
         closeNoDataAlert.onclick = () => noDataAlert.classList.remove('show');
+    }
+
+    if (closeSelectPangkalanAlert) {
+        closeSelectPangkalanAlert.onclick = () => selectPangkalanAlert.classList.remove('show');
     }
 
     closeModalBtn.onclick = () => {
