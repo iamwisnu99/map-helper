@@ -480,6 +480,77 @@
             cursor: not-allowed;
         }
 
+        .btn-refresh-mini {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 13px;
+        }
+
+        .btn-refresh-mini:hover {
+            color: var(--primary);
+            border-color: var(--primary);
+            background: var(--primary-light);
+            transform: rotate(30deg);
+        }
+
+        .action-buttons-group {
+            flex: 1;
+            min-width: fit-content;
+        }
+
+        .d-flex-buttons {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn-action-primary,
+        .btn-action-success {
+            height: 44px;
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+            white-space: nowrap;
+            padding: 0 20px;
+        }
+
+        .btn-action-primary {
+            background: var(--primary);
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+        }
+
+        .btn-action-success {
+            background: #10b981;
+            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);
+        }
+
+        .btn-action-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-action-success:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+
         /* Responsive */
         @media (max-width: 1024px) {
             body {
@@ -522,7 +593,7 @@
 
             header {
                 flex-direction: column;
-                gap: 20px;
+                gap: 12px;
                 align-items: stretch;
                 margin-bottom: 24px;
             }
@@ -535,6 +606,37 @@
 
             .title-area h1 {
                 font-size: 22px;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .filters-container {
+                gap: 15px;
+            }
+
+            .action-buttons-group {
+                min-width: 100%;
+                order: 10;
+            }
+
+            .d-flex-buttons {
+                width: 100%;
+            }
+
+            .btn-action-primary,
+            .btn-action-success {
+                flex: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .action-buttons-group {
+                min-width: 100%;
+                order: 10;
+            }
+
+            .d-flex-buttons {
+                flex-direction: row;
             }
         }
 
@@ -554,7 +656,28 @@
 
             .filters-container {
                 padding: 16px;
-                gap: 12px;
+                gap: 16px;
+            }
+
+            .filter-group {
+                width: 100%;
+            }
+
+            .action-buttons-group {
+                min-width: 100%;
+            }
+
+            .d-flex-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .btn-action-primary,
+            .btn-action-success {
+                height: 48px;
+                /* Slightly taller for mobile accessibility */
+                width: 100%;
+                flex: none;
             }
 
             .filter-group label {
@@ -1884,22 +2007,14 @@
             <div style="display: flex; align-items: center; gap: 15px;">
                 <button class="menu-toggle" id="menuToggle">☰</button>
                 <div class="title-area">
-                    <h1>Dashboard Monitoring</h1>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <h1>Dashboard Monitoring</h1>
+                        <button class="btn-refresh-mini" id="refreshDataBtn" title="Refresh Data">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
                     <p>Pantau kuota NIK LPG 3kg untuk keamanan pangkalan Anda.</p>
                 </div>
-            </div>
-            <div style="display: flex; gap: 12px; align-items: center;">
-                <button class="btn-reset" id="exportPdfBtn" title="Cetak Laporan PDF"
-                    style="background: var(--primary); color: white; width: auto; padding: 0 20px; font-weight: 600; font-size: 13px; gap: 8px;">
-                    <span>📄</span> Cetak Laporan
-                </button>
-                <button class="btn-reset" id="exportFullPdfBtn" title="Cetak Laporan Seluruh Pangkalan"
-                    style="background: #10b981; color: white; width: auto; padding: 0 20px; font-weight: 600; font-size: 13px; gap: 8px;">
-                    <span>📊</span> Cetak Seluruh Pangkalan
-                </button>
-                <button class="btn-reset" id="refreshDataBtn" title="Refresh Data">
-                    <span style="font-size: 16px;">↻</span>
-                </button>
             </div>
         </header>
 
@@ -2015,6 +2130,18 @@
                         <div class="select-option" data-value="50">50</div>
                         <div class="select-option" data-value="100">100</div>
                     </div>
+                </div>
+            </div>
+
+            <div class="filter-group action-buttons-group">
+                <label>Aksi Laporan</label>
+                <div class="d-flex-buttons">
+                    <button class="btn-action-primary" id="exportPdfBtn">
+                        <i class="fas fa-file-pdf"></i> Cetak Laporan
+                    </button>
+                    <button class="btn-action-success" id="exportFullPdfBtn">
+                        <i class="fas fa-file-chart-line"></i> Cetak Seluruh Pangkalan
+                    </button>
                 </div>
             </div>
         </div>
