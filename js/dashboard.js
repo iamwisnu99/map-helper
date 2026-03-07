@@ -171,8 +171,13 @@ function setupPinInputLogic() {
 
             if (val !== '') {
                 e.target.classList.add('animate-pop', 'filled');
-                if (index < inputs.length - 1) inputs[index + 1].focus();
-                else input.blur();
+                if (index < inputs.length - 1) {
+                    inputs[index + 1].focus();
+                } else {
+                    input.blur();
+                    // Auto-trigger verification when the last digit is entered
+                    if (unlockBtn) unlockBtn.click();
+                }
             } else {
                 e.target.classList.remove('filled');
             }
@@ -203,6 +208,12 @@ function setupPinInputLogic() {
                 });
                 const nextIdx = Math.min(pastedData.length, 5);
                 inputs[nextIdx].focus();
+
+                // Auto-trigger verification if 6 digits were pasted
+                if (pastedData.length === 6 && unlockBtn) {
+                    inputs[5].blur();
+                    unlockBtn.click();
+                }
             }
         };
     });
@@ -900,7 +911,7 @@ function showSuccessToast(message) {
 }
 
 if (profileSection) {
-    const logoutDropup = document.getElementById('logoutDropup');
+    const topbarProfileMenu = document.getElementById('topbarProfileMenu');
     const confirmLogoutBtn = document.getElementById('confirmLogoutBtn');
     const logoutConfirmModal = document.getElementById('logoutConfirmModal');
     const doLogoutBtn = document.getElementById('doLogoutBtn');
@@ -908,12 +919,14 @@ if (profileSection) {
 
     profileSection.onclick = (e) => {
         e.stopPropagation();
-        logoutDropup.classList.toggle('show');
+        topbarProfileMenu.classList.toggle('show');
+        profileSection.classList.toggle('active');
     };
 
     if (confirmLogoutBtn) {
         confirmLogoutBtn.onclick = () => {
-            logoutDropup.classList.remove('show');
+            topbarProfileMenu.classList.remove('show');
+            profileSection.classList.remove('active');
             logoutConfirmModal.classList.add('show');
         };
     }
@@ -930,9 +943,12 @@ if (profileSection) {
         };
     }
 
-    // Close dropup when clicking outside
+    // Close dropdown when clicking outside
     window.addEventListener('click', () => {
-        if (logoutDropup) logoutDropup.classList.remove('show');
+        if (topbarProfileMenu) {
+            topbarProfileMenu.classList.remove('show');
+            profileSection.classList.remove('active');
+        }
     });
 }
 
