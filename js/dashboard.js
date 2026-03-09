@@ -416,6 +416,7 @@ function refreshFilteredData() {
         const matchesType = (currentCustomerType === 'all' || d.jenis_pelanggan === currentCustomerType);
         const matchesSearch = !searchQuery ||
             (d.nik && d.nik.toLowerCase().includes(searchQuery)) ||
+            (d.nama_pelanggan && d.nama_pelanggan.toLowerCase().includes(searchQuery)) ||
             (d.owner_map && d.owner_map.toLowerCase().includes(searchQuery));
 
         return matchesAccount && matchesType && matchesSearch;
@@ -922,7 +923,17 @@ if (profileSection) {
 
     if (doLogoutBtn) {
         doLogoutBtn.onclick = () => {
-            StorageHelper.remove(['supabase_session', 'dashboard_unlocked'], () => location.reload());
+            const content = logoutConfirmModal.querySelector('.logout-modal-content');
+            content.innerHTML = `
+                <div style="padding: 30px 20px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.3s ease;">
+                    <i class="fas fa-spinner fa-spin" style="font-size: 42px; color: var(--primary); margin-bottom: 20px;"></i>
+                    <h3 style="font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 700; color: #0f172a; margin-bottom: 8px;">Mengakhiri Sesi...</h3>
+                    <p style="font-size: 14px; color: #64748b; margin: 0;">Harap tunggu sebentar.</p>
+                </div>
+            `;
+            setTimeout(() => {
+                StorageHelper.remove(['supabase_session', 'dashboard_unlocked'], () => location.reload());
+            }, 1200);
         };
     }
 

@@ -1852,6 +1852,37 @@
             transition: opacity 0.3s;
         }
 
+        @media (max-width: 768px) {
+            .pin-modal-content {
+                bottom: 0;
+                position: absolute;
+                border-radius: 32px 32px 0 0;
+                margin: 0;
+                width: 100%;
+                max-width: 100%;
+                padding: 30px 20px 40px;
+                animation: slideUpBottomPin 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            }
+
+            .pin-box {
+                width: 45px;
+                height: 55px;
+                font-size: 20px;
+            }
+
+            @keyframes slideUpBottomPin {
+                from {
+                    transform: translateY(100%);
+                    opacity: 0;
+                }
+
+                to {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+            }
+        }
+
         .decor-circle {
             position: absolute;
             border-radius: 50%;
