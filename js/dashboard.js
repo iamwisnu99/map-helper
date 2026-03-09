@@ -554,9 +554,11 @@ function renderTable() {
     const start = (currentPage - 1) * pageSize;
     const pageItems = filteredData.slice(start, start + pageSize);
 
+    let rowsHtml = '';
+
     pageItems.forEach(data => {
         const isLimit = data.total_tabung >= 10;
-        const row = `
+        rowsHtml += `
             <tr>
                 <td>
                     <div class="nik-cell">${data.nik}</div>
@@ -578,13 +580,14 @@ function renderTable() {
                 </td>
                 <td>
                     ${isLimit
-                ? '<span class="badge badge-danger pulse">● LIMIT TERCAPAI</span>'
+                ? '<span class="badge badge-danger">● LIMIT TERCAPAI</span>'
                 : '<span class="badge badge-success">✓ Aman</span>'}
                 </td>
             </tr>
         `;
-        tbody.innerHTML += row;
     });
+
+    tbody.innerHTML = rowsHtml;
 
     const endIdx = Math.min(start + pageSize, total);
     if (tableInfo) tableInfo.textContent = `Menampilkan ${start + 1}-${endIdx} dari ${total} data`;
@@ -1286,22 +1289,28 @@ if (exportFullPdfBtn) {
             pangkalanStats[owner].totalTransactions += qty;
 
             const nik = d.nik;
-            pangkalanStats[owner].niks[nik] = (pangkalanStats[owner].niks[nik] || 0) + qty;
+            const nama = d.nama_pelanggan || '-';
+            if (!pangkalanStats[owner].niks[nik]) {
+                pangkalanStats[owner].niks[nik] = { qty: 0, nama: nama };
+            }
+            pangkalanStats[owner].niks[nik].qty += qty;
         });
 
         const tableRows = Object.values(pangkalanStats).sort((a, b) => b.totalTransactions - a.totalTransactions).map((p, idx) => {
             // Find top 1-2 NIKs
-            const sortedNiks = Object.entries(p.niks).sort((a, b) => b[1] - a[1]);
+            const sortedNiks = Object.entries(p.niks).sort((a, b) => b[1].qty - a[1].qty);
             const topNiks = sortedNiks.slice(0, 2);
 
             const nikLabels = topNiks.map(n => n[0]).join('\n');
-            const qtyLabels = topNiks.map(n => n[1] + " Tabung").join('\n');
+            const namaLabels = topNiks.map(n => n[1].nama).join('\n');
+            const qtyLabels = topNiks.map(n => n[1].qty + " Tabung").join('\n');
 
             return [
                 idx + 1,
                 p.name,
                 p.totalTransactions + " Tabung",
                 nikLabels || '-',
+                namaLabels || '-',
                 qtyLabels || '-'
             ];
         });
@@ -1354,7 +1363,7 @@ if (exportFullPdfBtn) {
         doc.setFontSize(18);
         doc.text("LAPORAN TRANSAKSI MAP PANGKALAN", pageWidth / 2, 45, { align: 'center' });
 
-        const tableColumn = ["No", "Nama Pangkalan", "Total Transaksi (Bulan Ini)", "NIK Pelanggan (Top 1-2)", "Banyaknya Tabung"];
+        const tableColumn = ["No", "Nama Pangkalan", "Total Transaksi (Bulan Ini)", "NIK Pelanggan (Top 1-2)", "Nama Pelanggan", "Banyaknya Tabung"];
         doc.autoTable({
             head: [tableColumn],
             body: tableRows,
@@ -1368,11 +1377,12 @@ if (exportFullPdfBtn) {
                 minCellHeight: 12
             },
             columnStyles: {
-                0: { width: 15, halign: 'center' },
+                0: { width: 10, halign: 'center' },
                 1: { halign: 'left' },
-                2: { width: 40, halign: 'center', fontStyle: 'bold' },
-                3: { halign: 'left' },
-                4: { width: 40, halign: 'center' }
+                2: { width: 35, halign: 'center', fontStyle: 'bold' },
+                3: { width: 45, halign: 'left' },
+                4: { width: 45, halign: 'left' },
+                5: { width: 30, halign: 'center' }
             },
             margin: { left: 14, right: 14 },
             didDrawPage: (data) => {
